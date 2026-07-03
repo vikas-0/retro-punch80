@@ -16,7 +16,9 @@ No mainframe, necktie, or climate-controlled computer room required.
 
 - **Write normally** — paste a multi-line program instead of memorizing hole patterns.
 - **Punch a deck** — every source line becomes an interactive 80-column card.
+- **Keypunch live** — arm the keyboard and type characters directly into the current card as the carriage advances.
 - **Run the machinery** — load, punch, scan, read, and eject cards with satisfyingly unnecessary animation.
+- **Interpret the holes** — send a card through the print pass and stamp its decoded characters across the top edge.
 - **Turn up the clatter** — synthesized mechanical sounds make your laptop approximately 73% more mainframe.
 - **Edit the holes** — click individual punch positions when you feel like debugging at the speed of 1957.
 - **Play it back** — feed the whole deck through the reader and reconstruct the original source.
@@ -53,8 +55,10 @@ The deploy-ready files land in `dist/`. A `netlify.toml` is included for Netlify
 1. Select **PROGRAM INPUT** and paste a program, or load the sample.
 2. Build the deck and inspect the holes. They are tiny, but they have excellent posture.
 3. Select **PUNCH DECK** to animate the complete stack.
-4. Select **PLAY DECK** to read the cards back into source code.
-5. Select **RUN FORTRAN** and watch a modern browser impersonate a computer room.
+4. Or select **KEYPUNCH**, type directly onto the current card, and press **Escape** to disarm it.
+5. Select **INTERPRET** to print the text decoded from the holes along the top of the card.
+6. Select **PLAY DECK** to read the cards back into source code.
+7. Select **RUN FORTRAN** and watch a modern browser impersonate a computer room.
 
 Try the included specimen:
 

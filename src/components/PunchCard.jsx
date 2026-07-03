@@ -2,7 +2,7 @@ import { ROWS } from "../punchcard";
 
 const COLUMNS = Array.from({ length: 80 }, (_, index) => index);
 
-export function PunchCard({ card, scannerColumn, machineState, activePunch, onToggleHole, reducedMotion }) {
+export function PunchCard({ card, scannerColumn, machineState, activePunch, interpretedText, onToggleHole, reducedMotion }) {
   return (
     <div
       className={`punch-card ${reducedMotion ? "reduced" : ""}`}
@@ -11,6 +11,22 @@ export function PunchCard({ card, scannerColumn, machineState, activePunch, onTo
       <div className="card-heading">
         <span>PUNCH/80 · UNIVERSAL CODE CARD</span>
         <span>SEQ {String(card.sequence).padStart(3, "0")}</span>
+      </div>
+
+      <div className="interpreted-line" aria-label={`Printed interpretation: ${interpretedText || "none"}`}>
+        <span className="interpret-label" aria-hidden="true">TXT</span>
+        <div className="interpreted-grid" aria-hidden="true">
+          {COLUMNS.map((column) => {
+            const character = interpretedText[column];
+            const printed = column < interpretedText.length;
+            const printing = machineState === "printing" && column + 1 === scannerColumn;
+            return (
+              <span key={column} className={`${printed ? "printed" : ""} ${printing ? "printing" : ""}`}>
+                {printed ? character || "\u00a0" : "\u00a0"}
+              </span>
+            );
+          })}
+        </div>
       </div>
 
       <div className="column-numbers" aria-hidden="true">
@@ -57,7 +73,7 @@ export function PunchCard({ card, scannerColumn, machineState, activePunch, onTo
       </div>
 
       <div
-        className={`scan-beam ${machineState === "reading" ? "is-reading" : ""}`}
+        className={`scan-beam ${machineState === "reading" ? "is-reading" : ""} ${machineState === "printing" ? "is-printing" : ""}`}
         style={{ "--column": scannerColumn }}
         aria-hidden="true"
       />

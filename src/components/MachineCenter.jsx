@@ -1,4 +1,4 @@
-import { Eject, FilePlus, Hammer, Scan } from "@phosphor-icons/react";
+import { Eject, FilePlus, Hammer, Keyboard, Printer, Scan } from "@phosphor-icons/react";
 import { Indicator } from "./Indicator";
 import { PunchCard } from "./PunchCard";
 
@@ -11,12 +11,15 @@ export function MachineCenter({
   scannerColumn,
   machineState,
   activePunch,
+  keypunchMode,
   reducedMotion,
   busy,
   onToggleHole,
   onOpenProgram,
   onPunchCard,
   onReadCard,
+  onToggleKeypunch,
+  onPrintCard,
   onEjectCard,
 }) {
   const feedPosition = Math.max(0, ((scannerColumn - 1) / 79) * 100);
@@ -29,7 +32,9 @@ export function MachineCenter({
           <div>
             <Indicator active tone="lime" label="POWER" />
             <Indicator active={!busy} tone="lime" label="READY" />
+            <Indicator active={keypunchMode} tone="orange" label="KEY" />
             <Indicator active={machineState === "reading"} label="READ" />
+            <Indicator active={machineState === "printing"} tone="orange" label="PRINT" />
           </div>
         </div>
         <div className="reader-rail">
@@ -45,6 +50,7 @@ export function MachineCenter({
           scannerColumn={scannerColumn}
           machineState={machineState}
           activePunch={activePunch}
+          interpretedText={card.interpretation || ""}
           onToggleHole={onToggleHole}
           reducedMotion={reducedMotion}
         />
@@ -54,7 +60,9 @@ export function MachineCenter({
       </div>
 
       <div className="feed-position">
-        <span>FEED POSITION</span>
+        <span className={keypunchMode ? "keypunch-instruction" : ""}>
+          {keypunchMode ? "KEYPUNCH ARMED · TYPE · ESC TO EXIT" : "FEED POSITION"}
+        </span>
         <div className="feed-scale"><span style={{ left: `${feedPosition}%` }} /></div>
         <strong>{String(scannerColumn).padStart(2, "0")}</strong>
       </div>
@@ -64,6 +72,19 @@ export function MachineCenter({
           <CommandIcon icon={FilePlus} />
           <span><small>SOURCE</small>NEW DECK</span>
         </button>
+        <button
+          className={`keypunch-button ${keypunchMode ? "active" : ""}`}
+          type="button"
+          onClick={(event) => {
+            event.currentTarget.blur();
+            onToggleKeypunch();
+          }}
+          disabled={busy}
+          aria-pressed={keypunchMode}
+        >
+          <CommandIcon icon={Keyboard} />
+          <span><small>LIVE INPUT</small>{keypunchMode ? "KEYPUNCH ON" : "KEYPUNCH"}</span>
+        </button>
         <button className="orange" type="button" onClick={onPunchCard} disabled={busy}>
           <CommandIcon icon={Hammer} />
           <span><small>CURRENT CARD</small>PUNCH</span>
@@ -71,6 +92,10 @@ export function MachineCenter({
         <button type="button" onClick={onReadCard} disabled={busy}>
           <CommandIcon icon={Scan} />
           <span><small>DECODE CARD</small>READ</span>
+        </button>
+        <button type="button" onClick={onPrintCard} disabled={busy}>
+          <CommandIcon icon={Printer} />
+          <span><small>PRINT LEGEND</small>INTERPRET</span>
         </button>
         <button className="orange" type="button" onClick={onEjectCard} disabled={busy}>
           <CommandIcon icon={Eject} />

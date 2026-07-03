@@ -2,7 +2,7 @@ import { Gauge } from "@phosphor-icons/react";
 import { SPEEDS } from "../constants";
 import { Indicator } from "./Indicator";
 
-export function ControlStrip({ busy, machineState, speed, reducedMotion, onCycleSpeed, onToggleReducedMotion }) {
+export function ControlStrip({ busy, machineState, keypunchMode, speed, reducedMotion, onCycleSpeed, onToggleReducedMotion }) {
   const activeSpeedBars = speed === "slow" ? 3 : speed === "medium" ? 7 : 10;
 
   return (
@@ -11,8 +11,10 @@ export function ControlStrip({ busy, machineState, speed, reducedMotion, onCycle
         <span>STATUS</span>
         <Indicator active tone="lime" label="POWER" />
         <Indicator active={!busy} tone="lime" label="READY" />
-        <Indicator active={machineState === "punching"} tone="orange" label="PUNCH" />
+        <Indicator active={machineState === "punching" || machineState === "keypunch"} tone="orange" label="PUNCH" />
+        <Indicator active={keypunchMode} tone="orange" label="KEY" />
         <Indicator active={machineState === "reading"} label="READ" />
+        <Indicator active={machineState === "printing"} tone="orange" label="PRINT" />
         <Indicator active={machineState === "ejecting"} tone="orange" label="EJECT" />
       </div>
       <button className="speed-control" type="button" onClick={onCycleSpeed} disabled={busy}>

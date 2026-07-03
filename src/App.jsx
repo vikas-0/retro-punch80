@@ -9,6 +9,7 @@ import { OutputTerminal } from "./components/OutputTerminal";
 import { RestoredOutput } from "./components/RestoredOutput";
 import { Topbar } from "./components/Topbar";
 import { SAMPLE_PROGRAM, SPEEDS, sleep } from "./constants";
+import { useKeypunch } from "./hooks/useKeypunch";
 import { compileAndRunFortran } from "./lfortranRuntime";
 import { cardIsComplete, createDeck, decodeHoles, patternFor } from "./punchcard";
 import { createSoundEngine } from "./sound";
@@ -75,6 +76,20 @@ export function App() {
     setDeck((previous) => previous.map((item, itemIndex) => (itemIndex === index ? updater(item) : item)));
   }, []);
 
+  const { keypunchMode, disarmKeypunch, toggleKeypunch } = useKeypunch({
+    busy,
+    currentIndex,
+    scannerColumn,
+    speed,
+    delay,
+    makeSound,
+    updateCard,
+    setActivePunch,
+    setMachineState,
+    setScannerColumn,
+    setStatus,
+  });
+
   const toggleHole = useCallback(
     (column, row) => {
       if (busy) return;
@@ -83,7 +98,7 @@ export function App() {
         const key = `${column}:${row}`;
         if (holes.has(key)) holes.delete(key);
         else holes.add(key);
-        return { ...item, holes };
+        return { ...item, holes, interpretation: "" };
       });
       setScannerColumn(column + 1);
       makeSound("punch");
@@ -94,6 +109,7 @@ export function App() {
 
   const loadCard = useCallback(
     async (index) => {
+      disarmKeypunch();
       setMachineState("loading");
       setActivePunch(null);
       makeSound("feed");
@@ -103,7 +119,7 @@ export function App() {
       setMachineState("ready");
       await delay(90);
     },
-    [delay, makeSound],
+    [delay, disarmKeypunch, makeSound],
   );
 
   const punchCardAt = useCallback(
@@ -210,6 +226,40 @@ export function App() {
     [busy, currentIndex, scanCardAt],
   );
 
+  const runInterpreter = useCallback(async () => {
+    if (busy) return;
+    disarmKeypunch();
+    cancelRef.current = false;
+    setBusy(true);
+    setMachineState("printing");
+
+    const decoded = decodeHoles(deckRef.current[currentIndex]?.holes || new Set());
+    updateCard(currentIndex, (item) => ({ ...item, interpretation: "" }));
+    setStatus(`INTERPRETING CARD ${String(currentIndex + 1).padStart(2, "0")} · PRINT HEAD READY`);
+
+    for (let column = 0; column < Math.max(1, decoded.length); column += 1) {
+      if (cancelRef.current) break;
+      const character = decoded[column] || " ";
+      setScannerColumn(column + 1);
+      setStatus(
+        `PRINTING CARD ${String(currentIndex + 1).padStart(2, "0")} · COL ${String(column + 1).padStart(2, "0")} · ${character === " " ? "SPACE" : `“${character}”`}`,
+      );
+      updateCard(currentIndex, (item) => ({
+        ...item,
+        interpretation: decoded.slice(0, column + 1),
+      }));
+      makeSound("print");
+      await delay(SPEEDS[speed].print);
+    }
+
+    setMachineState("ready");
+    setBusy(false);
+    if (!cancelRef.current) {
+      setStatus(`INTERPRETER PASS COMPLETE · ${decoded.length} CHARACTERS PRINTED`);
+      makeSound("ready");
+    }
+  }, [busy, currentIndex, delay, disarmKeypunch, makeSound, speed, updateCard]);
+
   const runFortran = useCallback(async () => {
     if (busy || wasmRunning) return;
     const executableSource = decodedProgram.trim() ? decodedProgram : sourceDraft;
@@ -243,6 +293,7 @@ export function App() {
 
   const stopMachine = () => {
     cancelRef.current = true;
+    disarmKeypunch();
     setBusy(false);
     setActivePunch(null);
     setMachineState("ready");
@@ -251,6 +302,7 @@ export function App() {
 
   const ejectCard = async () => {
     if (busy) return;
+    disarmKeypunch();
     setBusy(true);
     setMachineState("ejecting");
     setStatus("EJECTING CARD");
@@ -266,6 +318,7 @@ export function App() {
   };
 
   const buildDeck = () => {
+    disarmKeypunch();
     const nextDeck = createDeck(sourceDraft, false);
     setDeck(nextDeck);
     deckRef.current = nextDeck;
@@ -285,6 +338,7 @@ export function App() {
 
   const resetDeck = () => {
     if (busy) return;
+    disarmKeypunch();
     const nextDeck = createDeck(sourceDraft, false);
     setDeck(nextDeck);
     deckRef.current = nextDeck;
@@ -305,6 +359,7 @@ export function App() {
         sequence: item.sequence,
         source: item.source,
         holes: [...item.holes],
+        interpretation: item.interpretation || "",
       })),
     };
     const url = URL.createObjectURL(new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" }));
@@ -320,6 +375,16 @@ export function App() {
     setSpeed((current) => (current === "slow" ? "medium" : current === "medium" ? "turbo" : "slow"));
   };
 
+  const openProgram = () => {
+    disarmKeypunch();
+    setProgramOpen(true);
+  };
+
+  const openHelp = () => {
+    disarmKeypunch();
+    setHelpOpen(true);
+  };
+
   return (
     <div className="app-shell">
       <Topbar
@@ -327,9 +392,9 @@ export function App() {
         deckSize={deck.length}
         completion={completion}
         soundOn={soundOn}
-        onOpenProgram={() => setProgramOpen(true)}
+        onOpenProgram={openProgram}
         onToggleSound={() => setSoundOn((value) => !value)}
-        onOpenHelp={() => setHelpOpen(true)}
+        onOpenHelp={openHelp}
       />
 
       <main className="console-body">
@@ -338,19 +403,22 @@ export function App() {
           currentIndex={currentIndex}
           busy={busy}
           onLoadCard={loadCard}
-          onOpenProgram={() => setProgramOpen(true)}
+          onOpenProgram={openProgram}
         />
         <MachineCenter
           card={card}
           scannerColumn={scannerColumn}
           machineState={machineState}
           activePunch={activePunch}
+          keypunchMode={keypunchMode}
           reducedMotion={reducedMotion}
           busy={busy}
           onToggleHole={toggleHole}
-          onOpenProgram={() => setProgramOpen(true)}
+          onOpenProgram={openProgram}
           onPunchCard={() => runPunch(false)}
           onReadCard={() => runRead(false)}
+          onToggleKeypunch={toggleKeypunch}
+          onPrintCard={runInterpreter}
           onEjectCard={ejectCard}
         />
         <OutputTerminal
@@ -389,6 +457,7 @@ export function App() {
       <ControlStrip
         busy={busy}
         machineState={machineState}
+        keypunchMode={keypunchMode}
         speed={speed}
         reducedMotion={reducedMotion}
         onCycleSpeed={cycleSpeed}

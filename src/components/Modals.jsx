@@ -59,7 +59,7 @@ export function HelpModal({ onClose }) {
         <header>
           <div>
             <p className="eyebrow">OPERATOR MANUAL</p>
-            <h2 id="help-title">Four moves. One tiny time machine.</h2>
+            <h2 id="help-title">Seven moves. One tiny time machine.</h2>
           </div>
           <button className="icon-button" type="button" onClick={onClose} aria-label="Close help">
             <X size={22} />
@@ -68,7 +68,9 @@ export function HelpModal({ onClose }) {
         <ol className="help-steps">
           <li><strong>Load</strong><span>Paste a program. Every source line becomes a card.</span></li>
           <li><strong>Punch</strong><span>Punch one card or the whole deck while the head moves column by column.</span></li>
+          <li><strong>Keypunch</strong><span>Arm the keyboard, type directly onto the current card, and press Escape when finished.</span></li>
           <li><strong>Read</strong><span>Scan the current card and inspect its decoded line.</span></li>
+          <li><strong>Interpret</strong><span>Print the text decoded from the holes across the top edge of the card.</span></li>
           <li><strong>Play</strong><span>Feed the full deck through the reader to reconstruct the source.</span></li>
           <li><strong>Run</strong><span>Compile the restored Fortran deck to WebAssembly and execute it locally.</span></li>
         </ol>

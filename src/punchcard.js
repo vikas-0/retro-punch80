@@ -86,6 +86,7 @@ export function createDeck(source, filled = false) {
     sequence: index + 1,
     source: line.slice(0, 80),
     holes: filled ? encodeLine(line) : new Set(),
+    interpretation: "",
   }));
 }
 

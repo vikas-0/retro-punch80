@@ -10,8 +10,10 @@ The lights, moving scan beam, feed motion, and mechanical sounds are theatrical.
 | --- | --- |
 | Card data | Stores every punched position independently |
 | Punching | Converts each source character into one or more holes |
+| Keyboard keypunch | Writes typed characters into successive columns and punches each row immediately |
 | Manual editing | Adds or removes the selected hole from the card |
 | Reading | Reconstructs characters from the current holes, column by column |
+| Interpreter pass | Decodes the holes and progressively prints that text across the card's top edge |
 | Playback | Reads every card and joins the decoded lines into a program |
 | Scanner movement | Animates the reader while the virtual card is processed |
 | Physical input | Not implemented; there is no camera, image recognition, or card-reader hardware interface |
@@ -29,7 +31,8 @@ A deck is an array of card objects. Each card has an identifier, sequence number
     "0:12",
     "0:1",
     "1:1"
-  ])
+  ]),
+  interpretation: "A1"
 }
 ```
 
@@ -48,6 +51,8 @@ For the example above:
 The interface displays columns as 1–80, while the stored column indices are 0–79. Rows are stored using their printed card labels: `12`, `11`, `0`, and `1` through `9`.
 
 The original `source` remains on the card so the simulator can animate punching, show a printed card label, and verify whether the holes still match the intended line. Reading does not use that field to produce its decoded output; it uses `holes`.
+
+Keyboard keypunch mode updates both `source` and `holes` as the operator types. The optional `interpretation` field stores what the virtual interpreter has printed so that the legend remains visible after its animation finishes. The interpreter always derives that text from `holes`, not from `source`.
 
 ## Punching a line
 
@@ -105,7 +110,8 @@ JavaScript Sets are converted into arrays when a deck is exported:
     {
       "sequence": 1,
       "source": "A1",
-      "holes": ["0:12", "0:1", "1:1"]
+      "holes": ["0:12", "0:1", "1:1"],
+      "interpretation": "A1"
     }
   ]
 }

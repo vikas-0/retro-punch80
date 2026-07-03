@@ -168,10 +168,34 @@ export function createSoundEngine() {
     tone(860, 0.05, 0.035, "sine", 180);
   }
 
+  function print() {
+    const audio = getContext();
+    if (!audio) return;
+    const start = audio.currentTime + 0.001;
+    const variation = 0.96 + Math.random() * 0.08;
+
+    oscillatorLayer(audio, {
+      start,
+      frequency: 760 * variation,
+      endFrequency: 520 * variation,
+      duration: 0.024,
+      volume: 0.026,
+      type: "square",
+    });
+    noiseLayer(audio, {
+      start,
+      duration: 0.018,
+      volume: 0.035,
+      filterType: "bandpass",
+      frequency: 1900 * variation,
+      q: 1.8,
+    });
+  }
+
   function ready() {
     tone(420, 0.08, 0.045, "sine", 90);
     window.setTimeout(() => tone(620, 0.1, 0.045, "sine", 80), 80);
   }
 
-  return { punch, feed, read, ready };
+  return { punch, feed, read, print, ready };
 }
