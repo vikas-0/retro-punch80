@@ -4,6 +4,8 @@
 
 **PUNCH/80** turns ordinary source code into a stack of animated 80-column punch cards, feeds them back through a virtual reader, and can even compile and run Fortran in your browser with LFortran WebAssembly.
 
+**[Launch the live punch-card machine →](https://retro-punch80.netlify.app/)**
+
 No mainframe, necktie, or climate-controlled computer room required.
 
 **Are those holes actually doing anything?** Yes—with a few historically inspired liberties. Read [How the virtual punch cards work](docs/punch-card-model.md) for the data structure, encoding rules, reader path, and accuracy notes.
