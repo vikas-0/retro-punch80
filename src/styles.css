@@ -338,6 +338,9 @@ button:disabled {
 .machine-center {
   min-width: 0;
   background: #04101a;
+  --card-grid-left: 46px;
+  --card-grid-right: 22px;
+  --reader-track-max-width: 964px;
 }
 
 .reader-housing {
@@ -405,14 +408,15 @@ button:disabled {
 
 .reader-rail {
   position: absolute;
-  left: 18px;
-  right: 18px;
+  left: 50%;
+  width: min(calc(100% - 76px), var(--reader-track-max-width));
   bottom: 12px;
   height: 28px;
   border-radius: 3px;
   background: #031018;
   border: 1px solid #245469;
   box-shadow: inset 0 0 0 2px #07131c, 0 0 12px #15d9ef44;
+  transform: translateX(calc(-50% + 12px));
 }
 
 .reader-rail::after {
@@ -429,7 +433,7 @@ button:disabled {
 .reader-carriage {
   position: absolute;
   top: -12px;
-  left: calc(18px + ((100% - 70px) * (var(--column) - 1) / 79));
+  left: calc(100% * (var(--column) - 0.5) / 80);
   width: 52px;
   height: 50px;
   display: flex;
@@ -600,7 +604,10 @@ button:disabled {
   position: absolute;
   top: 38px;
   bottom: 28px;
-  left: calc(22px + ((100% - 44px) * (var(--column) - 1) / 79));
+  left: calc(
+    var(--card-grid-left) +
+    ((100% - var(--card-grid-left) - var(--card-grid-right)) * (var(--column) - 0.5) / 80)
+  );
   width: 1px;
   background: var(--cyan);
   opacity: 0.5;
@@ -619,7 +626,10 @@ button:disabled {
 .impact-ring {
   position: absolute;
   top: 43%;
-  left: calc(22px + ((100% - 44px) * (var(--column) - 1) / 79));
+  left: calc(
+    var(--card-grid-left) +
+    ((100% - var(--card-grid-left) - var(--card-grid-right)) * (var(--column) - 0.5) / 80)
+  );
   width: 28px;
   height: 28px;
   border: 2px solid var(--orange);
@@ -1544,7 +1554,10 @@ button:disabled {
     overflow-x: auto;
   }
 
-  .reader-housing,
+  .reader-housing {
+    min-width: 736px;
+  }
+
   .card-stage,
   .feed-position,
   .command-rail {
