@@ -66,6 +66,8 @@ program hello
 end program hello
 ```
 
+Ready to feed the machine something meatier? Open [Complex Fortran sample decks](SAMPLES.md) for a Mandelbrot renderer, a prime-number sieve, and matrix multiplication—all tested with the bundled browser runtime and sized for PUNCH/80 cards.
+
 ## Under the Bakelite hood
 
 Each source line becomes one 80-column card. Letters and digits use classic Hollerith-style patterns. Other printable characters use a reversible extension, allowing mixed-case source and punctuation to survive a complete punch/read round trip.
