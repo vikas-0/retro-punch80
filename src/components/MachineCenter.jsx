@@ -10,6 +10,7 @@ export function MachineCenter({
   card,
   scannerColumn,
   machineState,
+  activePunch,
   reducedMotion,
   busy,
   onToggleHole,
@@ -43,6 +44,7 @@ export function MachineCenter({
           card={card}
           scannerColumn={scannerColumn}
           machineState={machineState}
+          activePunch={activePunch}
           onToggleHole={onToggleHole}
           reducedMotion={reducedMotion}
         />

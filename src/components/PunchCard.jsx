@@ -2,7 +2,7 @@ import { ROWS } from "../punchcard";
 
 const COLUMNS = Array.from({ length: 80 }, (_, index) => index);
 
-export function PunchCard({ card, scannerColumn, machineState, onToggleHole, reducedMotion }) {
+export function PunchCard({ card, scannerColumn, machineState, activePunch, onToggleHole, reducedMotion }) {
   return (
     <div
       className={`punch-card ${reducedMotion ? "reduced" : ""}`}
@@ -31,16 +31,19 @@ export function PunchCard({ card, scannerColumn, machineState, onToggleHole, red
             <div className="hole-grid">
               {COLUMNS.map((column) => {
                 const active = card.holes.has(`${column}:${row}`);
+                const striking = activePunch?.column === column && activePunch.row === row;
                 return (
                   <button
                     type="button"
                     tabIndex={-1}
                     key={`${column}:${row}`}
-                    className={`hole ${active ? "punched" : ""} ${column + 1 === scannerColumn ? "scanned" : ""}`}
+                    className={`hole ${active ? "punched" : ""} ${column + 1 === scannerColumn ? "scanned" : ""} ${striking ? "striking" : ""}`}
                     onClick={() => onToggleHole(column, row)}
                     aria-label={`${active ? "Unpunch" : "Punch"} row ${row}, column ${column + 1}`}
                     title={`Row ${row} · Column ${column + 1}`}
-                  />
+                  >
+                    {striking && <span key={activePunch.serial} className="impact-ring" aria-hidden="true" />}
+                  </button>
                 );
               })}
             </div>
@@ -58,9 +61,6 @@ export function PunchCard({ card, scannerColumn, machineState, onToggleHole, red
         style={{ "--column": scannerColumn }}
         aria-hidden="true"
       />
-      {machineState === "punching" && (
-        <div className="impact-ring" style={{ "--column": scannerColumn }} aria-hidden="true" />
-      )}
     </div>
   );
 }

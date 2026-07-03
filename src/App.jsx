@@ -32,9 +32,11 @@ export function App() {
   const [reducedMotion, setReducedMotion] = useState(false);
   const [speed, setSpeed] = useState("medium");
   const [busy, setBusy] = useState(false);
+  const [activePunch, setActivePunch] = useState(null);
   const [sounds] = useState(createSoundEngine);
   const cancelRef = useRef(false);
   const deckRef = useRef(deck);
+  const punchSerialRef = useRef(0);
 
   useEffect(() => {
     deckRef.current = deck;
@@ -93,6 +95,7 @@ export function App() {
   const loadCard = useCallback(
     async (index) => {
       setMachineState("loading");
+      setActivePunch(null);
       makeSound("feed");
       await delay(260);
       setCurrentIndex(index);
@@ -115,16 +118,26 @@ export function App() {
         if (cancelRef.current) return;
         setScannerColumn(column + 1);
         const punches = patternFor(target.source[column] ?? " ");
-        if (punches.length) {
+        for (const row of punches) {
+          if (cancelRef.current) return;
+          const serial = punchSerialRef.current + 1;
+          punchSerialRef.current = serial;
+          setActivePunch({ column, row, serial });
+          setStatus(
+            `PUNCHING CARD ${String(index + 1).padStart(2, "0")} · COL ${String(column + 1).padStart(2, "0")} · ROW ${row}`,
+          );
           updateCard(index, (item) => {
             const holes = new Set(item.holes);
-            punches.forEach((row) => holes.add(`${column}:${row}`));
+            holes.add(`${column}:${row}`);
             return { ...item, holes };
           });
           makeSound("punch");
+          await delay(SPEEDS[speed].strike);
         }
+        setActivePunch(null);
         await delay(SPEEDS[speed].punch);
       }
+      setActivePunch(null);
       setMachineState("verified");
       setStatus(`CARD ${String(index + 1).padStart(2, "0")} PUNCHED · VERIFIED`);
       makeSound("ready");
@@ -144,6 +157,7 @@ export function App() {
         await punchCardAt(index);
       }
       setMachineState("ready");
+      setActivePunch(null);
       setBusy(false);
       if (!cancelRef.current) setStatus(wholeDeck ? "FULL DECK PUNCHED · READY TO PLAY" : "CARD PUNCHED · READY TO READ");
     },
@@ -230,6 +244,7 @@ export function App() {
   const stopMachine = () => {
     cancelRef.current = true;
     setBusy(false);
+    setActivePunch(null);
     setMachineState("ready");
     setStatus("OPERATION PAUSED");
   };
@@ -329,6 +344,7 @@ export function App() {
           card={card}
           scannerColumn={scannerColumn}
           machineState={machineState}
+          activePunch={activePunch}
           reducedMotion={reducedMotion}
           busy={busy}
           onToggleHole={toggleHole}

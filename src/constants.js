@@ -7,10 +7,9 @@ export const SAMPLE_PROGRAM = `program hello
 end program hello`;
 
 export const SPEEDS = {
-  slow: { label: "SLOW", punch: 72, read: 34 },
-  medium: { label: "MEDIUM", punch: 34, read: 18 },
-  turbo: { label: "TURBO", punch: 14, read: 8 },
-  
+  slow: { label: "SLOW", punch: 72, strike: 92, read: 34 },
+  medium: { label: "MEDIUM", punch: 34, strike: 56, read: 18 },
+  turbo: { label: "TURBO", punch: 14, strike: 28, read: 8 },
 };
 
 export const sleep = (duration) => new Promise((resolve) => window.setTimeout(resolve, duration));
