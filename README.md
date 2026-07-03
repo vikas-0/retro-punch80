@@ -1,52 +1,91 @@
 # PUNCH/80
 
-An interactive retro-futuristic 80-column punch-card simulator that converts source code into virtual card decks and runs Fortran locally with LFortran WebAssembly.
+> The future of computing, as imagined by a very optimistic mainframe in 1969.
 
-## Features
+**PUNCH/80** turns ordinary source code into a stack of animated 80-column punch cards, feeds them back through a virtual reader, and can even compile and run Fortran in your browser with LFortran WebAssembly.
 
-- Convert ordinary multi-line source code into an 80-column virtual card deck
-- Animate card loading, punching, scanning, reading, and ejection
-- Edit individual punch holes manually
-- Replay a deck to reconstruct the original source
-- Compile and run Fortran entirely inside the browser
-- Display compiler diagnostics, stdout, compile time, execution time, and generated WASM size
-- Synthesized mechanical sound effects, speed controls, and reduced-motion support
-- Export a card deck as JSON
-- Responsive desktop and tablet layouts
+No mainframe, necktie, or climate-controlled computer room required.
 
-## Run locally
+![PUNCH/80 punch-card console](docs/images/punch-card-console.jpg)
+
+## Insert card. Press buttons. Make science.
+
+- **Write normally** — paste a multi-line program instead of memorizing hole patterns.
+- **Punch a deck** — every source line becomes an interactive 80-column card.
+- **Run the machinery** — load, punch, scan, read, and eject cards with satisfyingly unnecessary animation.
+- **Turn up the clatter** — synthesized mechanical sounds make your laptop approximately 73% more mainframe.
+- **Edit the holes** — click individual punch positions when you feel like debugging at the speed of 1957.
+- **Play it back** — feed the whole deck through the reader and reconstruct the original source.
+- **Run Fortran locally** — compile the restored deck with LFortran WASM and inspect stdout, timings, diagnostics, and generated program size.
+- **Keep the evidence** — export the card deck as JSON.
+
+## A brief tour of the machinery
+
+| Load a perfectly ordinary program | Compile the restored deck in the WASM bay |
+| --- | --- |
+| ![PUNCH/80 source editor](docs/images/program-input.jpg) | ![PUNCH/80 Fortran execution bay](docs/images/execution-bay.jpg) |
+
+## Wake the machine
+
+You will need a recent Node.js release. Then pull the big green lever:
 
 ```bash
 npm install
 npm run dev
 ```
 
-Then open [http://127.0.0.1:5173](http://127.0.0.1:5173).
+Open [http://127.0.0.1:5173](http://127.0.0.1:5173), switch on your imaginary vacuum tubes, and begin.
 
-Create a production build with:
+For a production build:
 
 ```bash
 npm run build
 ```
 
-## How it works
+The deploy-ready files land in `dist/`. A `netlify.toml` is included for Netlify deployments.
 
-Each source line becomes one 80-column card. Letters and digits use classic Hollerith-style patterns. Other printable characters use a reversible extension so mixed-case source code and punctuation survive a complete punch/read round trip.
+## Operator's quick-start card
 
-Fortran source is compiled in the browser by the bundled LFortran compiler. The compiler emits a second WebAssembly program, which PUNCH/80 executes through a small WASI bridge while capturing standard output.
+1. Select **PROGRAM INPUT** and paste a program, or load the sample.
+2. Build the deck and inspect the holes. They are tiny, but they have excellent posture.
+3. Select **PUNCH DECK** to animate the complete stack.
+4. Select **PLAY DECK** to read the cards back into source code.
+5. Select **RUN FORTRAN** and watch a modern browser impersonate a computer room.
 
-The compiler is loaded only when `RUN FORTRAN` is selected. No source code is sent to a server.
+Try the included specimen:
 
-## Current limitations
+```fortran
+program hello
+  implicit none
+  integer :: i
+  do i = 1, 5
+    print *, 'HELLO FROM CARD', i
+  end do
+end program hello
+```
 
-- Source lines are limited to 80 characters.
+## Under the Bakelite hood
+
+Each source line becomes one 80-column card. Letters and digits use classic Hollerith-style patterns. Other printable characters use a reversible extension, allowing mixed-case source and punctuation to survive a complete punch/read round trip.
+
+Fortran source is compiled inside the browser by the bundled LFortran compiler. It emits a second WebAssembly program, which PUNCH/80 executes through a small WASI bridge while capturing standard output. The compiler is loaded only after **RUN FORTRAN** is selected, and source code never leaves the browser.
+
+The interface includes speed controls and reduced-motion support, because even fictional electromechanical equipment should respect its operator.
+
+## Fine print from the computer room
+
+- Source lines are limited to 80 characters. The card has spoken.
 - Decks are limited to 50 cards.
 - Interactive Fortran stdin (`read`) is not implemented yet.
-- LFortran is still under active development, so some advanced or legacy Fortran programs may not compile.
-- The first compiler run loads a roughly 22 MB WebAssembly asset.
+- Some advanced or legacy Fortran may not compile while LFortran continues to evolve.
+- The first compiler run loads a roughly 22 MB WebAssembly asset. Good things come to those who watch blinking lights.
 
 ## LFortran
 
-The bundled browser runtime is LFortran 0.52.0, commit `b5e05bd3a`, matching the build used by the official LFortran browser frontend when this project was created. Runtime provenance is recorded in `public/lfortran/runtime.json`.
+The bundled browser runtime is **LFortran 0.52.0**, commit `b5e05bd3a`, matching the build used by the official LFortran browser frontend when this project was created. Runtime provenance lives in `public/lfortran/runtime.json`.
 
-LFortran is distributed under a BSD license. Its license is included at `public/lfortran/LICENSE`.
+LFortran is distributed under the BSD license; its license is included at `public/lfortran/LICENSE`.
+
+---
+
+Built for curious programmers, retro-computing romantics, and anyone who believes compilation should make a satisfying **ka-chunk**.
