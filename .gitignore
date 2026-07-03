@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.npm-cache/
+qa/
+design-qa.md
+AGENTS.md
+.DS_Store
+*.log
+.env
+.env.*
+!.env.example

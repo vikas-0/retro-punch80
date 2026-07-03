@@ -1,0 +1,8 @@
+{
+  "name": "LFortran",
+  "version": "0.52.0",
+  "commit": "b5e05bd3a",
+  "buildType": "release",
+  "source": "https://lfortran.github.io/wasm_builds/release/b5e05bd3a",
+  "reason": "Pinned to the build used by the official dev.lfortran.org browser frontend; newer release 0.62.0 was API-compatible but did not emit stdout when executed through the published browser integration contract during verification."
+}
