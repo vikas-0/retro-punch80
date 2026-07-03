@@ -66,7 +66,7 @@ program hello
 end program hello
 ```
 
-Ready to feed the machine something meatier? Open [Complex Fortran sample decks](SAMPLES.md) for a Mandelbrot renderer, a prime-number sieve, and matrix multiplication—all tested with the bundled browser runtime and sized for PUNCH/80 cards.
+Ready to feed the machine something meatier? Open [Complex Fortran sample decks](SAMPLES.md) for a Mandelbrot census, a prime-number sieve, and matrix multiplication—all tested with the bundled browser runtime and sized for PUNCH/80 cards.
 
 ## Under the Bakelite hood
 
