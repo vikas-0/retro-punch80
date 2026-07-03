@@ -8,6 +8,7 @@ import {
   FilePlus,
   FolderOpen,
   Gauge,
+  GithubLogo,
   Hammer,
   Lightning,
   Pause,
@@ -518,6 +519,16 @@ export function App() {
           <button className="help-button" type="button" onClick={() => setHelpOpen(true)} aria-label="Open help">
             <Question size={21} weight="duotone" />
           </button>
+          <a
+            className="github-link"
+            href="https://github.com/vikas-0/retro-punch80"
+            target="_blank"
+            rel="noreferrer"
+            aria-label="View PUNCH/80 on GitHub"
+            title="View source on GitHub"
+          >
+            <GithubLogo size={21} weight="duotone" />
+          </a>
         </div>
       </header>
 

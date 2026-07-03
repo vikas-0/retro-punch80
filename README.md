@@ -6,6 +6,8 @@
 
 No mainframe, necktie, or climate-controlled computer room required.
 
+**Are those holes actually doing anything?** Yes—with a few historically inspired liberties. Read [How the virtual punch cards work](docs/punch-card-model.md) for the data structure, encoding rules, reader path, and accuracy notes.
+
 ![PUNCH/80 punch-card console](docs/images/punch-card-console.jpg)
 
 ## Insert card. Press buttons. Make science.
@@ -67,6 +69,8 @@ end program hello
 ## Under the Bakelite hood
 
 Each source line becomes one 80-column card. Letters and digits use classic Hollerith-style patterns. Other printable characters use a reversible extension, allowing mixed-case source and punctuation to survive a complete punch/read round trip.
+
+For the complete technical tour, open [How the virtual punch cards work](docs/punch-card-model.md).
 
 Fortran source is compiled inside the browser by the bundled LFortran compiler. It emits a second WebAssembly program, which PUNCH/80 executes through a small WASI bridge while capturing standard output. The compiler is loaded only after **RUN FORTRAN** is selected, and source code never leaves the browser.
 
